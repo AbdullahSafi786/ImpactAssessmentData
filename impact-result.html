@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Impact Assessment Results</title>
+    <style>
+        body {
+            font-family: Calibri, sans-serif;
+            margin: 30px;
+            background-color: #f4f9f4;
+        }
+        h2 {
+            text-align: center;
+            color: #2d572c;
+            background-color: #d9ead3;
+            padding: 10px;
+            border: 2px solid #93c47d;
+        }
+        p {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #b6d7a8;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #c9e2c9;
+            color: #000;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f7f2;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #4caf50;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+        .avg-row {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Impact Assessment Results</h2>
+
+<!-- Technology and Crop Information -->
+<p>Technology: <span th:text="${inputDTO.technologyName}">[Technology Name]</span></p>
+<p>Target Crop: <span th:text="${inputDTO.targetCrop}">[Target Crop]</span></p>
+
+<!-- Main Result Table -->
+<table>
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Year wise No. in Operation</th>
+            <th>Cost Change Due to Yield/Output Growth</th>
+            <th>Gross Input Cost Reduction</th>
+            <th>Change in Net Cost per Unit of Final Output</th>
+            <th>Probability of Success</th>
+            <th>Rate of Technology Obsolescence</th>
+            <th>Yearwise Adoption Rate</th>
+            <th>Tech-Induced Shift of Supply Curve</th>
+            <th>Proportion Reduction in Price</th>
+            <th>Production of Targeted Crop(s)/Crop Group Just Before the Adoption Started (Qo)</th>
+            <th>Price of Targeted Crop(s)/Crop Group Just Before the Adoption Started (Po)</th>
+            <th>Producers Surplus Matrix</th>
+            <th>Consumer Surplus Matrix</th>
+            <th>Total Surplus Matrix</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop over output list -->
+        <tr th:each="output : ${outputList}">
+            <td th:text="${output.year}">2020</td>
+            <td th:text="${output.numInOperation}">100</td>
+            <td th:text="${#numbers.formatDecimal(output.costChangeYieldGrowth, 1, 8)}">0.0045</td>
+            <td th:text="${#numbers.formatDecimal(output.grossInputCostReduction, 1, 8)}">0.0033</td>
+            <td th:text="${#numbers.formatDecimal(output.netCostChangePerUnit, 1, 8)}">0.0021</td>
+            <td th:text="${output.probabilityOfSuccess}">1.0000</td>
+            <td th:text="${output.techObsolescenceRate}">1.0000</td>
+            <td th:text="${#numbers.formatDecimal(output.yearwiseAdoptionRate, 1, 10)}">0.1200</td>
+            <td th:text="${#numbers.formatDecimal(output.techShiftSupplyCurve, 1, 10)}">0.0033</td>
+            <td th:text="${#numbers.formatDecimal(output.proportionPriceReduction, 1, 10)}">0.0021</td>
+            <td th:text="${#numbers.formatDecimal(output.productionBeforeAdoption,1,2)}">6960000000</td>
+            <td th:text="${#numbers.formatDecimal(output.priceBeforeAdoption, 1, 2)}">27.00</td>
+            <td th:text="${#numbers.formatDecimal(output.producerSurplus, 1, 2)}">100000.00</td>
+            <td th:text="${#numbers.formatDecimal(output.consumerSurplus, 1, 2)}">50000.00</td>
+            <td th:text="${#numbers.formatDecimal(output.totalSurplus, 1, 2)}">150000.00</td>
+        </tr>
+
+        <!-- Average Row -->
+        <tr th:if="${outputList != null and !outputList.isEmpty()}" class="avg-row">
+            <td colspan="12">Average Surplus (All Years)</td>
+            <td th:text="${#numbers.formatDecimal(outputList[0].averageProducerSurplus, 1, 2)}">[Avg Producer Surplus]</td>
+            <td th:text="${#numbers.formatDecimal(outputList[0].averageConsumerSurplus, 1, 2)}">[Avg Consumer Surplus]</td>
+            <td th:text="${#numbers.formatDecimal(outputList[0].averageTotalSurplus, 1, 2)}">[Avg Total Surplus]</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Back Link -->
+<a th:href="@{/impact}">← Back to Form</a>
+
+</body>
+</html>

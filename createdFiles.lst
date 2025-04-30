@@ -1,0 +1,4 @@
+com\agrihub\impact_assessment\service\AssessmentServiceTest$MockValuesService.class
+com\agrihub\impact_assessment\controller\AssessmentControllerTest.class
+com\agrihub\impact_assessment\service\AssessmentServiceTest.class
+com\agrihub\impact_assessment\ImpactAssessmentApplicationTests.class

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Impact Assessment Input</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fdf9;
+            margin: 30px;
+        }
+        h2 {
+            background-color: #e0ffe0;
+            padding: 10px;
+            color: #333;
+            border: 2px solid #a2cfa2;
+            text-align: center;
+            font-weight: bold;
+        }
+        fieldset {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 2px solid #a2cfa2;
+            background-color: #eef7ee;
+        }
+        legend {
+            font-weight: bold;
+            color: #2f602f;
+            padding: 0 10px;
+        }
+        label {
+            display: inline-block;
+            width: 280px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 300px;
+            padding: 5px;
+            font-size: 14px;
+        }
+        input[type="checkbox"] {
+            margin-left: 10px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: #4caf50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        // Function to handle "Change in Operational Cost" logic
+        function updateProportionateChange() {
+            const changeInCost = document.getElementById("changeInOperationalCost").value;
+            const proportionateChangeField = document.getElementById("proportionateChangeCost");
+
+            let inputFraction = proportionateChangeField.value.replace(",", "."); // Replace commas with dots
+            inputFraction = parseFloat(inputFraction);
+
+            // Ensure the value is valid before applying logic
+            if (!isNaN(inputFraction)) {
+                if (changeInCost === "Reducing") {
+                    // Make the value negative
+                    proportionateChangeField.value = inputFraction > 0 ? -inputFraction : inputFraction;
+                } else if (changeInCost === "Increasing") {
+                    // Make the value positive
+                    proportionateChangeField.value = inputFraction < 0 ? -inputFraction : inputFraction;
+                } else {
+                    // Clear the value for "No change"
+                    proportionateChangeField.value = "";
+                }
+            } else {
+                proportionateChangeField.value = ""; // Clear invalid input
+            }
+        }
+
+        // Function to handle "Is Yield Enhanced?" logic
+        function updateYieldEnhancement() {
+            const yieldEnhancing = document.getElementById("yieldEnhancing").value;
+            const yieldIncreaseField = document.getElementById("yieldIncreaseFraction");
+
+            if (yieldEnhancing === "true") {
+                yieldIncreaseField.disabled = false; // Enable input
+                yieldIncreaseField.placeholder = "Add value"; // Add placeholder
+            } else {
+                yieldIncreaseField.disabled = true; // Disable input
+                yieldIncreaseField.value = "0"; // Clear value
+                yieldIncreaseField.placeholder = "Skip"; // Show "Skip"
+            }
+        }
+    </script>
+</head>
+<body>
+
+<h2>Impact Assessment: Tractor Operated Digger</h2>
+
+<form th:action="@{/impact/compute}" th:object="${inputDTO}" method="post">
+    <fieldset>
+        <legend>Technology & Function</legend>
+        <label>Name of the Technology:</label>
+        <input type="text" th:field="*{technologyName}" placeholder="Enter Technology Name" required/><br/>
+        <label>Function Performed:</label>
+        <input type="text" th:field="*{functionPerformed}" placeholder="Enter Function" required/><br/>
+    </fieldset>
+
+    <fieldset>
+        <legend>Crop & Time</legend>
+        <label>Target Crop:</label>
+        <select th:field="*{targetCrop}" required>
+            <option value="">--Select--</option>
+            <option value="Groundnut">Groundnut</option>
+            <option value="Jute">Jute</option>
+            <option value="Lentil">Lentil</option>
+            <option value="Maize">Maize</option>
+            <option value="Small Millets">Small Millets</option>
+            <option value="Mustard">Mustard</option>
+            <option value="Barley">Barley</option>
+            <option value="BlackGram">Black Gram</option>
+            <option value="Cereals">Cereals</option>
+            <option value="ChickPea">ChickPea</option>
+            <option value="Coarse Cereals">Coarse Cereals</option>
+            <option value="Cotton">Cotton</option>
+            <option value="FoodGrains">FoodGrains</option>
+            <option value="Fruits">Fruits</option>
+            <option value="GreenGram">Green Gram</option>
+            <option value="OilSeeds">OilSeeds</option>
+            <option value="Onion">Onion</option>
+            <option value="Paddy">Paddy</option>
+            <option value="Pigeon Pea">Pigeon Pea</option>
+            <option value="Potato">Potato</option>
+            <option value="Pulses">Pulses</option>
+            <option value="Sorghum">Sorghum</option>
+            <option value="Soyabean">Soyabean</option>
+            <option value="Sugarcane">Sugarcane</option>
+            <option value="Sunflower">Sunflower</option>
+            <option value="Tomato">Tomato</option>
+            <option value="Tobacco">Tobacco</option>
+            <option value="Vegetables">Vegetables</option>
+            <option value="Wheat">Wheat</option>
+            <option value="Other">Other</option>
+        </select><br/>
+        <label>Year of Adoption (From):</label>
+        <input type="number" th:field="*{yearFrom}" placeholder="Enter Year (From)" required/><br/>
+        <label>Year of Adoption (To):</label>
+        <input type="number" th:field="*{yearTo}" placeholder="Enter Year (To)" required/><br/>
+    </fieldset>
+
+    <fieldset>
+        <legend>Area & Output</legend>
+        <label>Total Area under Target Crop (Ha):</label>
+        <input type="number" step="0.000000001" th:field="*{totalAreaHa}" placeholder="Enter Area in Ha" required/><br/>
+        <label>Total Output of Target Crop (Kg):</label>
+        <input type="number" step="0.000000001" th:field="*{totalOutputKg}" placeholder="Enter Output in Kg" required/><br/>
+    </fieldset>
+
+    <fieldset>
+        <legend>Equipment</legend>
+        <label>Capacity of Equipment:</label>
+        <input type="number" step="0.000000001" th:field="*{equipmentCapacity}" placeholder="Enter Capacity" required/>
+        <select th:field="*{equipmentCapacityUnit}" required>
+            <option value="">--Select Unit--</option>
+            <option value="Ha/day">Ha/day</option>
+            <option value="Kg/day">Kg/day</option>
+        </select><br/>
+        <label>Operational Days per Year:</label>
+        <input type="number" th:field="*{operationalDays}" placeholder="Enter Days" required/><br/>
+    </fieldset>
+
+    <fieldset>
+        <legend>Economics</legend>
+        <label>Change in Operational Cost:</label>
+        <select id="changeInOperationalCost" th:field="*{changeInOperationalCost}" onchange="updateProportionateChange()">
+            <option value="">--Select--</option>
+            <option value="Reducing">Reducing</option>
+            <option value="Increasing">Increasing</option>
+            <option value="No change">No change</option>
+        </select><br/>
+
+        <label>Proportionate Change in Cost (fraction):</label>
+        <input type="number" id="proportionateChangeCost" step="0.000000001" th:field="*{costChangeFraction}" placeholder="0.0" oninput="updateProportionateChange()"/><br/>
+
+        <label>Is Yield Enhanced?</label>
+        <select id="yieldEnhancing" th:field="*{yieldEnhancing}" onchange="updateYieldEnhancement()" required>
+            <option value="">--Select--</option>
+            <option th:value="true">Yes</option>
+            <option th:value="false">No</option>
+        </select><br/>
+
+        <label>Proportionate Increase in Yield (fraction):</label>
+        <input type="number" id="yieldIncreaseFraction" step="0.000000001" th:field="*{yieldIncreaseFraction}" placeholder="Skip" disabled/><br/>
+    </fieldset>
+
+    <fieldset>
+        <legend>Elasticities</legend>
+        <label>Price Elasticity of Demand:</label>
+        <input type="number" step="0.000000001" th:field="*{priceElasticityDemand}" placeholder="Enter Elasticity Demand"/><br/>
+        <label>Price Elasticity of Supply:</label>
+        <input type="number" step="0.000000001" th:field="*{priceElasticitySupply}" placeholder="Enter Elasticity Supply"/><br/>
+    </fieldset>
+
+    <button type="submit">Calculate Impact</button>
+</form>
+
+</body>
+</html>
